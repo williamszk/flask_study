@@ -14,3 +14,16 @@ flask --app app.py --debug run
 
 cd tests
 pytest -sv
+python3 repl_endpoints.py
+
+# about docker
+
+touch Dockerfile
+touch .dockerignore
+
+docker build -t rest-apis-flask-python .
+
+# run the docker container
+docker run -p 5000:5000 --name my-rest-api-flask-python rest-apis-flask-python
+docker stop my-rest-api-flask-python
+docker rm my-rest-api-flask-python
