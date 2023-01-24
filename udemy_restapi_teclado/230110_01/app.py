@@ -1,47 +1,59 @@
+import uuid
 from flask import Flask, request
+from db import items, stores
 
 app = Flask(__name__)
-
-stores = [{"name": "My Store 01", "items": [{"name": "Chair", "price": 15.99}]}]
 
 
 @app.get("/store")
 def get_stores():
-    return {"stores": stores}
+    return {"stores": list(stores.values())}
 
 
 @app.post("/store")
 def create_store():
-    request_data = request.get_json()
-    new_store = {"name": request_data["name"], "items": []}
-    stores.append(new_store)
+    store = request.get_json()
+    store_id = uuid.uuid4().hex
+    new_store = {**store, "id": store_id}
+    # stores.append(new_store)
+    stores[store_id] = new_store
     # return 201: Ok everything went well
-    return new_store, 201
+    return store, 201
 
 
-@app.post("/store/<string:name>/item")
-def create_item(name):
-    request_data = request.get_json()
-    for store in stores:
-        if store["name"] == name:
-            new_item = {"name": request_data["name"], "price": request_data["price"]}
-            store["items"].append(new_item)
-            return new_item, 201
-    
-    return {"Error": f"Sorry, we couldn't find a store with name '{name}'."}, 404
+@app.post("/item")
+def create_item():
+    item = request.get_json()
+    if item["store_id"] not in stores:
+        return {
+            "Error": f"Sorry, we couldn't find a store with name '{item['store_id']}'."
+        }, 404
 
-@app.get("/store/<string:name>")
-def get_store(name):
-    for store in stores:
-        if store["name"] == name:
-            return store
-    
-    return {"Error": f"Sorry, we couldn't find a store with name '{name}'."}, 404
+    item_id = uuid.uuid4().hex
+    new_item = {**item, "id": item_id}
+    items[item_id] = new_item
 
-@app.get("/store/<string:name>/item")
-def get_item(name):
-    for store in stores:
-        if store["name"] == name:
-            return {"items":store["items"]}
-    
-    return {"Error": f"Sorry, we couldn't find a store with name '{name}'."}, 404
+    return item, 201
+
+
+@app.get("/item")
+def get_all_items():
+    return {"items": list(items.values())}
+
+
+@app.get("/store/<string:store_id>")
+def get_store(store_id):
+    try:
+        return stores[store_id]
+    except KeyError:
+        return {
+            "Error": f"Sorry, we couldn't find a store with store_id '{store_id}'."
+        }, 404
+
+
+@app.get("/item/<string:item_id>")
+def get_item(item_id):
+    try:
+        return items[item_id]
+    except KeyError:
+        return {"Error": f"Sorry, we couldn't find a store with name '{item_id}'."}, 404

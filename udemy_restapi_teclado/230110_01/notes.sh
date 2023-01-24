@@ -4,6 +4,8 @@ pip install flask
 pip install requests 
 pip install types-requests
 pip install pytest
+pip install flask-smorest
+pip install python-dotenv
 
 # run flask
 flask run
