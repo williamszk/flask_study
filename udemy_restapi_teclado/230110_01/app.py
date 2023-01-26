@@ -39,6 +39,7 @@ def create_store():
     # return 201: Ok everything went well
     return store_info, 201
 
+
 @app.delete("/store/<string:store_id>")
 def delete_store(store_id):
     try:
@@ -51,6 +52,7 @@ def delete_store(store_id):
 @app.get("/item")
 def get_all_items():
     return {"items": ITEMS}
+
 
 @app.post("/item")
 def create_item():
@@ -98,11 +100,15 @@ def delete_item(item_id):
     except KeyError:
         abort(404, message=f"Sorry, we couldn't find a item with item_id'{item_id}'.")
 
+
 @app.put("/item/<string:item_id>")
 def update_item(item_id):
     item_info = request.get_json()
     if "price" not in item_info or "name" not in item_info:
-        abort(400, message="Bad request. Ensure that 'price' and 'name' are in the JSON payload.")
+        abort(
+            400,
+            message="Bad request. Ensure that 'price' and 'name' are in the JSON payload.",
+        )
     try:
         item = ITEMS[item_id]
         item |= item_info
