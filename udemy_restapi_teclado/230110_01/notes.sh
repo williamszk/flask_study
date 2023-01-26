@@ -39,3 +39,5 @@ docker run -p 5000:5000 \
     -w /app -v "$(pwd):/app" \
     flask-smorest-api
 
+# To access the swagger-ui
+localhost:5000/swagger-ui

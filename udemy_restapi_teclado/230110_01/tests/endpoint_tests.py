@@ -8,7 +8,6 @@ from typing import Optional
 # %%
 BASE_URL = "http://localhost:5000"
 
-
 def print_response(r: requests.Response):
     print(r)
     try:
@@ -110,3 +109,5 @@ store_id = list(output["stores"].keys())[0]
 
 make_request("delete", f"/store/{store_id}")
 _ = make_request("get", "/store", None)
+
+# %%
