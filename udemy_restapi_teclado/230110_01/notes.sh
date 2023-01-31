@@ -6,6 +6,10 @@ pip install types-requests
 pip install pytest
 pip install flask-smorest
 pip install python-dotenv
+pip install sqlalchemy 
+pip install flask-sqlalchemy 
+
+pip freeze > requirements.txt
 
 # run flask
 flask run
@@ -40,4 +44,4 @@ docker run -p 5000:5000 \
     flask-smorest-api
 
 # To access the swagger-ui
-localhost:5000/swagger-ui
+http://localhost:5000/swagger-ui

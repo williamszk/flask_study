@@ -3,12 +3,14 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import ITEMS, STORES
+from schemas import ItemSchema, ItemUpdateSchema
 
 blp = Blueprint("items", __name__, description="Operations on Items")
 
 
 @blp.route("/item/<string:item_id>")
 class Items(MethodView):
+    @blp.response(200, ItemSchema)
     def get(self, item_id):
         try:
             return ITEMS[item_id]
@@ -26,13 +28,15 @@ class Items(MethodView):
                 404, message=f"Sorry, we couldn't find a item with item_id'{item_id}'."
             )
 
-    def put(self, item_id):
-        item_info = request.get_json()
-        if "price" not in item_info or "name" not in item_info:
-            abort(
-                400,
-                message="Bad request. Ensure that 'price' and 'name' are in the JSON payload.",
-            )
+    @blp.arguments(ItemUpdateSchema)
+    @blp.response(200, ItemSchema)
+    def put(self, item_info,item_id):
+        # item_info = request.get_json()
+        # if "price" not in item_info or "name" not in item_info:
+        #     abort(
+        #         400,
+        #         message="Bad request. Ensure that 'price' and 'name' are in the JSON payload.",
+        #     )
         try:
             item = ITEMS[item_id]
             item |= item_info
@@ -43,20 +47,23 @@ class Items(MethodView):
 
 @blp.route("/item")
 class ItemsList(MethodView):
+    @blp.response(200, ItemSchema(many=True))
     def get(self):
-        return {"items": ITEMS}
+        return ITEMS.values()
 
-    def post(self):
-        item_info = request.get_json()
-        if (
-            "price" not in item_info
-            or "store_id" not in item_info
-            or "name" not in item_info
-        ):
-            return abort(
-                404,
-                message="Ensure that 'price', 'store_id' and 'name' are in the request body.",
-            )
+    @blp.arguments(ItemSchema)
+    @blp.response(201, ItemSchema)
+    def post(self, item_info):
+        # item_info = request.get_json()
+        # if (
+        #     "price" not in item_info
+        #     or "store_id" not in item_info
+        #     or "name" not in item_info
+        # ):
+        #     return abort(
+        #         404,
+        #         message="Ensure that 'price', 'store_id' and 'name' are in the request body.",
+        #     )
         for it in ITEMS.values():
             if (
                 item_info["name"] == it["name"]

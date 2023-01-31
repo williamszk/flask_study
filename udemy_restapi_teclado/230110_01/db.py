@@ -13,3 +13,10 @@ ITEMS = {
         "store_id": "cddf5818c2ab41ec845b3b367ff4224f",
     },
 }
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+
+

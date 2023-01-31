@@ -111,3 +111,6 @@ make_request("delete", f"/store/{store_id}")
 _ = make_request("get", "/store", None)
 
 # %%
+
+
+
