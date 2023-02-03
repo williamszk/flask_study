@@ -1,5 +1,8 @@
 python -m venv .venv
 
+pip install mypy 
+pip install black 
+pip install ipython 
 pip install flask
 pip install requests 
 pip install types-requests

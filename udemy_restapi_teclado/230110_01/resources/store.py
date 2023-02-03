@@ -2,8 +2,11 @@ import uuid
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from db import STORES
+from db import db
 from schemas import StoreSchema
+from models import StoreModel
 
 blp = Blueprint("stores", __name__, description="Operations on Stores")
 
@@ -40,18 +43,15 @@ class StoreList(MethodView):
     @blp.arguments(StoreSchema)
     @blp.response(200, StoreSchema)
     def post(self, store_info):
-        # store_info = request.get_json()
-        # if "name" not in store_info:
-        #     abort(
-        #         400,
-        #         message="Bad request. Ensure 'name' is included in the JSON payload.",
-        #     )
-        for store in STORES.values():
-            if store_info["name"] == store["name"]:
-                abort(400, message="Store already exists.")
-        store_id = uuid.uuid4().hex
-        new_store = {**store_info, "id": store_id}
-        # stores.append(new_store)
-        STORES[store_id] = new_store
-        # return 201: Ok everything went well
-        return store_info, 201
+
+        store = StoreModel(**store_info)
+        try:
+            db.session.add(store)
+            db.session.commit()
+        except IntegrityError:
+            abort(400, message="Sorry, the store name already exist.")
+
+        except SQLAlchemyError:
+            abort(500, message="Sorry, an error happened while creating the store.")
+
+        return store

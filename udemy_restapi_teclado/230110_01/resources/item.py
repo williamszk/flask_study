@@ -2,8 +2,12 @@ import uuid
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError 
+from db import db
 from db import ITEMS, STORES
 from schemas import ItemSchema, ItemUpdateSchema
+from models import ItemModel
+
 
 blp = Blueprint("items", __name__, description="Operations on Items")
 
@@ -54,29 +58,26 @@ class ItemsList(MethodView):
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, item_info):
-        # item_info = request.get_json()
-        # if (
-        #     "price" not in item_info
-        #     or "store_id" not in item_info
-        #     or "name" not in item_info
-        # ):
-        #     return abort(
+        # for it in ITEMS.values():
+        #     if (
+        #         item_info["name"] == it["name"]
+        #         and item_info["store_id"] == it["store_id"]
+        #     ):
+        #         abort(404, message=f"Sorry, item already exists.")
+        # if item_info["store_id"] not in STORES:
+        #     abort(
         #         404,
-        #         message="Ensure that 'price', 'store_id' and 'name' are in the request body.",
+        #         message=f"Sorry, we couldn't find a store with name '{item_info['store_id']}'.",
         #     )
-        for it in ITEMS.values():
-            if (
-                item_info["name"] == it["name"]
-                and item_info["store_id"] == it["store_id"]
-            ):
-                abort(404, message=f"Sorry, item already exists.")
-        if item_info["store_id"] not in STORES:
-            abort(
-                404,
-                message=f"Sorry, we couldn't find a store with name '{item_info['store_id']}'.",
-            )
-        item_id = uuid.uuid4().hex
-        new_item = {**item_info, "id": item_id}
-        ITEMS[item_id] = new_item
+        # item_id = uuid.uuid4().hex
+        # new_item = {**item_info, "id": item_id}
+        # ITEMS[item_id] = new_item
+        item = ItemModel(**item_info)
 
-        return item_info, 201
+        try:
+            db.session.add(item)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="Sorry, a problem happened while inserting the item.")
+
+        return item

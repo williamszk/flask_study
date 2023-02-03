@@ -1,5 +1,7 @@
 # %%
+import os
 import requests
+from pathlib import Path
 from requests import JSONDecodeError
 import json
 import uuid
@@ -39,6 +41,12 @@ def make_request(typeof: str, endpoint: str, json_body: Optional[dict] = None):
 #                   The endpoint calls:
 # --------------------------------------------------------------------------------------------------------------------------- #
 
+# %%
+# ----------------------------------------- #
+# Reset the database                        #
+# ----------------------------------------- #
+root_of_tests = Path("..")
+os.remove(root_of_tests / ".." / "data.db")
 
 # %%
 # ----------------------------------------- #
@@ -50,7 +58,12 @@ make_request("get", f"/item", None)
 # ----------------------------------------- #
 # Create a Store                            #
 # ----------------------------------------- #
-make_request("post", f"/store", {"name": "The Westeros Store"})
+_=make_request("post", f"/store", {"name": "The Westeros Store"})
+# %%
+# ----------------------------------------- #
+# Create a Store 01                          #
+# ----------------------------------------- #
+_=make_request("post", f"/store", {"name": "The Middle-Earth Store"})
 
 # %%
 # ----------------------------------------- #
@@ -64,6 +77,20 @@ _ = make_request(
         "price": 99.99,
         "name": "The Iron Throne",
         "store_id": list(output["stores"].keys())[0],
+    },
+)
+
+# %%
+# ----------------------------------------- #
+# Create an Item 02                         # 
+# ----------------------------------------- #
+_ = make_request(
+    "post",
+    f"/item",
+    {
+        "price": 99.99,
+        "name": "The Iron Throne",
+        "store_id": 1,
     },
 )
 
