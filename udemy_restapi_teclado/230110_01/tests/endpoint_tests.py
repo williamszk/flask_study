@@ -10,6 +10,7 @@ from typing import Optional
 # %%
 BASE_URL = "http://localhost:5000"
 
+
 def print_response(r: requests.Response):
     print(r)
     try:
@@ -30,6 +31,8 @@ def make_request(typeof: str, endpoint: str, json_body: Optional[dict] = None):
         r = requests.delete(url, json=json_body)
     elif typeof == "put":
         r = requests.put(url, json=json_body)
+    else:
+        raise Exception(f"HTTP verb: '{typeof}' does not exist...")
 
     print_response(r)
 
@@ -41,34 +44,34 @@ def make_request(typeof: str, endpoint: str, json_body: Optional[dict] = None):
 #                   The endpoint calls:
 # --------------------------------------------------------------------------------------------------------------------------- #
 
-# %%
-# ----------------------------------------- #
-# Reset the database                        #
-# ----------------------------------------- #
+# %% Reset the database
 root_of_tests = Path("..")
 os.remove(root_of_tests / ".." / "data.db")
-
-# %%
-# ----------------------------------------- #
-# Get All Items                             #
-# ----------------------------------------- #
+# %% Get All Items
 make_request("get", f"/item", None)
-
-# %%
-# ----------------------------------------- #
-# Create a Store                            #
-# ----------------------------------------- #
-_=make_request("post", f"/store", {"name": "The Westeros Store"})
-# %%
-# ----------------------------------------- #
-# Create a Store 01                          #
-# ----------------------------------------- #
-_=make_request("post", f"/store", {"name": "The Middle-Earth Store"})
-
-# %%
-# ----------------------------------------- #
-# Create an Item                            #
-# ----------------------------------------- #
+# %% Get one item
+make_request("get", f"/item/{'1'}", None)
+# %% Update one item
+make_request("put", f"/item/1", {"price": 99999.00, "name": "The Throne of Daenerys"})
+# %% Update another Item
+make_request(
+    "put", f"/item/2", {"price": 999.00, "name": "Chair of wood", "store_id": "3"}
+)
+# %% Get all Stores
+_ = make_request("get", f"/store")
+# %% Create a Store
+_ = make_request("post", f"/store", {"name": "The Westeros Store"})
+# %% Get a Store
+_ = make_request("get", f"/store/1")
+# %% Delete a Store
+_ = make_request("delete", f"/store/2")
+# %% Create a Store 01
+_ = make_request("post", f"/store", {"name": "The Middle-Earth Store"})
+# %% Create an item for that store
+_ = make_request(
+    "post", f"/item", {"name": "The One Ring", "price": 10.99, "store_id": 2}
+)
+# %% Create an Item
 output = make_request("get", f"/store", None)
 _ = make_request(
     "post",
@@ -80,10 +83,7 @@ _ = make_request(
     },
 )
 
-# %%
-# ----------------------------------------- #
-# Create an Item 02                         # 
-# ----------------------------------------- #
+# %% Create an Item 02
 _ = make_request(
     "post",
     f"/item",
@@ -94,25 +94,16 @@ _ = make_request(
     },
 )
 
-# %%
-# ----------------------------------------- #
-# Get all Item                              #
-# ----------------------------------------- #
+# %% Get all Item
 output = make_request("get", "/item", None)
 
 # %%
-# ----------------------------------------- #
 # Delete an Item                            #
-# ----------------------------------------- #
 item_id = list(output["items"].keys())[0]
+item_id = "1"
 make_request("delete", f"/item/{item_id}", None)
-
-_ = make_request("get", "/item", None)
-
-# %%
-# ----------------------------------------- #
-# Update an Item                              #
-# ----------------------------------------- #
+# _ = make_request("get", "/item", None)
+# %% Update an Item
 item_id = "1"
 make_request(
     "put",
@@ -123,12 +114,9 @@ make_request(
     },
 )
 
-_ = make_request("get", "/item", None)
+# _ = make_request("get", "/item", None)
 
-# %%
-# ----------------------------------------- #
-# Create a Store and delete it right after
-# ----------------------------------------- #
+# %% Create a Store and delete it right after
 _ = make_request("post", f"/store", {"name": "The MiddleEarth Store"})
 
 output = make_request("get", "/store", None)
@@ -138,6 +126,3 @@ make_request("delete", f"/store/{store_id}")
 _ = make_request("get", "/store", None)
 
 # %%
-
-
-

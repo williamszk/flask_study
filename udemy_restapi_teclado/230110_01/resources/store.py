@@ -15,43 +15,31 @@ blp = Blueprint("stores", __name__, description="Operations on Stores")
 class Store(MethodView):
     @blp.response(200, StoreSchema)
     def get(self, store_id):
-        try:
-            return STORES[store_id]
-        except KeyError:
-            abort(
-                404,
-                message=f"Sorry, we couldn't find a store with store_id '{store_id}'.",
-            )
+        store = StoreModel.query.get_or_404(store_id)
+        return store
 
     def delete(self, store_id):
-        try:
-            del STORES[store_id]
-            return {"message": "Store deleted."}
-        except KeyError:
-            abort(
-                404, message=f"Sorry, we couldn't find a item with item_id'{store_id}'."
-            )
+        store = StoreModel.query.get_or_404(store_id)
+        db.session.delete(store)
+        db.session.commit()
+        return store
 
 
 @blp.route("/store")
 class StoreList(MethodView):
     @blp.response(200, StoreSchema(many=True))
     def get(self):
-        # return {"stores": STORES}
-        return STORES.values()
+        return StoreModel.query.all()
 
     @blp.arguments(StoreSchema)
     @blp.response(200, StoreSchema)
     def post(self, store_info):
-
         store = StoreModel(**store_info)
         try:
             db.session.add(store)
             db.session.commit()
         except IntegrityError:
             abort(400, message="Sorry, the store name already exist.")
-
         except SQLAlchemyError:
             abort(500, message="Sorry, an error happened while creating the store.")
-
         return store
