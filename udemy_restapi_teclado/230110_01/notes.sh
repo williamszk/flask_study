@@ -1,5 +1,6 @@
 python -m venv .venv
 
+python.exe -m pip install --upgrade pip
 pip install mypy 
 pip install black 
 pip install ipython 
@@ -11,6 +12,9 @@ pip install flask-smorest
 pip install python-dotenv
 pip install sqlalchemy 
 pip install flask-sqlalchemy 
+pip install flask_jwt_extended
+pip install passlib
+
 
 pip freeze > requirements.txt
 
@@ -26,7 +30,6 @@ pytest -sv
 python3 repl_endpoints.py
 
 # about docker
-
 touch Dockerfile
 touch .dockerignore
 
