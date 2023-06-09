@@ -1,78 +1,58 @@
+import uuid
 from flask import Flask, request
+
+from db import stores, items
 
 app = Flask(__name__)
 
-stores  = [
-    {
-        "name": "The Middle Earth Store",
-        "items": [
-            {"name": "The One Ring", "price": 1999.99},
-        ]
-    }
-]
 
 @app.get("/store")
 def get_stores():
-    return {"stores": stores}
+    return {"stores": list(stores.values())}
+
 
 @app.post("/store")
 def create_store():
-    request_data = request.get_json() 
-    # TODO: how do we guarantee that the incoming json has some necessary fields?
-    new_store = {
-        "name": request_data["name"],
-        "items": []
-    }
-    # TODO: there should be a way to check if the store is already there
-    stores.append(new_store)
-
-    return new_store, 201
-
-@app.post("/store/<string:name>/item")
-def create_item(name):
-    store_name = name
-    store = next(filter(lambda store: store["name"] == store_name , stores), None)
-    if store is None:
-        return {
-            "message": 
-            f"The store '{store_name}' does not exist."
-            }, 404
-    items = store["items"]
-    request_data = request.get_json()
-    # TODO: how to check if the incoming json has all the required fields?
-    new_item_name = request_data["name"]
-    if next(filter(lambda item: item["name"] == new_item_name, items), None):
-        return {
-            "message": 
-            f"An item with name '{new_item_name}' already exists in store '{store_name}'."
-            }, 403
-    
-    new_item = {
-        "name": new_item_name,
-        "price": request_data["price"]
-    }
-    store["items"].append(new_item)
-    return new_item, 201
-
-@app.get("/store/<string:name>")
-def get_store(name):
-    for store in stores:
-        if store["name"] == name:
-            return store
-    return {"message":"Store not found"}, 404
-
-@app.get("/store/<string:name>/item")
-def get_item_in_store(name):
-    for store in stores:
-        if store["name"] == name:
-            return {"items":store["items"]}
-    return {"message":"Store not found"}, 404
+    store_data = request.get_json()
+    store_id = uuid.uuid4().hex
+    store = {**store_data, "id": store_id}
+    stores[store_id] = store
+    return stores, 201
 
 
+@app.post("/item")
+def create_item():
+    item_data = request.get_json()
+    # The id of the store should come inside the json payload
+
+    # Check if the store_id in the json payload already exists in the stores data structure
+    if item_data["store_id"] not in stores:
+        return {"message": "Store not found"}, 404
+    # "name"
+    # "price"
+    # "store_id"
+    item_id = uuid.uuid4().hex
+    item = {**item_data, "id": item_id}
+    items["item_id"] = item
+
+    return item, 201
 
 
+@app.get("/item")
+def get_all_items():
+    return {"items": list(items.values())}
 
 
+def get_store(store_id):
+    try:
+        return stores[store_id]
+    except KeyError:
+        return {"message": "Store not found"}, 404
 
 
-
+@app.get("/item/<string:item_id>")
+def get_item(item_id):
+    try:
+        return items[item_id]
+    except KeyError:
+        return {"message": "Store not found"}, 404

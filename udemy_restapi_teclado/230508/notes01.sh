@@ -1,8 +1,11 @@
 
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install black mypy
 pip install flask 
+pip install python-dotenv
+
+pip install -r requirements.txt
 
 touch app.py
 
@@ -18,4 +21,4 @@ docker run --rm -p 5000:5000 --name rest-api-flask-python williamszk/rest-api-fl
 docker kill rest-api-flask-python
 docker rm rest-api-flask-python
 
-
+flask run
