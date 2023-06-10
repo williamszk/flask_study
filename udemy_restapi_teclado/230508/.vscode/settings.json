@@ -3,5 +3,8 @@
 		"editor.defaultFormatter": "ms-python.black-formatter"
 	},
 	"python.formatting.provider": "none",
-	"python.analysis.typeCheckingMode": "off"
+	"python.analysis.typeCheckingMode": "off",
+	"cSpell.words": [
+		"smorest"
+	]
 }
