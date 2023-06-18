@@ -7,8 +7,10 @@ from db import stores, items
 app = Flask(__name__)
 
 
+# ------ section for Stores ------
 @app.get("/store")
 def get_stores():
+    print("Banana!")
     return {"stores": list(stores.values())}
 
 
@@ -33,6 +35,43 @@ def create_store():
     store = {**store_data, "id": store_id}
     stores[store_id] = store
     return stores, 201
+
+
+@app.get("/store/<string:store_id>")
+def get_store(store_id):
+    try:
+        return stores[store_id]
+    except KeyError:
+        abort(404, message="Store not found")
+
+
+@app.delete("/store/<string:store_id>")
+def delete_store(store_id):
+    try:
+        del stores[store_id]
+        return {"message": "Store deleted."}
+    except KeyError:
+        abort(404, message="Store not found")
+
+
+# TODO: implement endpoint for updating store
+
+
+# ------ section for Items ------
+
+# NOTE: Maybe this endpoint needs to be above the "/item" endpoint
+@app.get("/item/<string:item_id>")
+def get_item(item_id):
+    print(f"Debug: {item_id=}")
+    try:
+        return items[item_id]
+    except KeyError:
+        abort(404, message="Item not found")
+
+
+@app.get("/item")
+def get_all_items():
+    return {"items": list(items.values())}
 
 
 @app.post("/item")
@@ -74,22 +113,13 @@ def create_item():
     return item, 201
 
 
-@app.get("/item")
-def get_all_items():
-    return {"items": list(items.values())}
-
-
-@app.get("/store/<string:store_id>")
-def get_store(store_id):
+@app.delete("/item/<string:item_id>")
+def delete_item(item_id):
     try:
-        return stores[store_id]
-    except KeyError:
-        abort(404, message="Store not found")
-
-
-@app.get("/item/<string:item_id>")
-def get_item(item_id):
-    try:
-        return items[item_id]
+        del items[item_id]
+        return {"message": "Item deleted."}
     except KeyError:
         abort(404, message="Item not found")
+
+
+# TODO: implement endpoint for updating item
