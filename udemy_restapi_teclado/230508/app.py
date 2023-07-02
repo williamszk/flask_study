@@ -23,6 +23,8 @@ def get_specific_store(store_id):
 
 @app.post("/store")
 def create_store():
+
+    print("banana!")
     store_data = request.get_json()
 
     # ensure that name field is included
