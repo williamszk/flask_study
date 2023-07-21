@@ -8,20 +8,29 @@ def main():
 
     # TODO: [ ] are we testing all endpoints?
 
-    # create a store ----------------------------------------------------
+    print("-- create a store ----------------------------------------------------")
     res = requests.post(f"{url}:{port}/store", json={"name": "bob marley"})
     print_res(res)
     store_id = res.json()["id"]
 
-    # get all stores ----------------------------------------------------
+    print("-- get all stores ----------------------------------------------------")
+    res = requests.get(f"{url}:{port}/store")
+    print_res(res)
 
-    # get a specific store ----------------------------------------------
+    print("-- get a specific store ----------------------------------------------")
     res = requests.get(f"{url}:{port}/store/{store_id}")
     print_res(res)
 
-    # create an item in that new store ----------------------------------
+    print("-- create an item in that new store ----------------------------------")
+    res = requests.post(
+        f"{url}:{port}/item",
+        json={"price": 10.00, "store_id": store_id, "name": "Kitchen Chair"},
+    )
+    print_res(res)
 
-    # get all items -----------------------------------------------------
+    print("-- get all items -----------------------------------------------------")
+    res = requests.get(f"{url}:{port}/item")
+    print_res(res)
 
 
 def print_res(res, headers=False, raw=False):
