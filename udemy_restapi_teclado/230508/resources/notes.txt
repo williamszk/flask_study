@@ -1,0 +1,8 @@
+In this directory `resources` we have code related to the domain 
+objects/entities/resources that the REST API is managing.
+
+What do we mean by managing?
+The REST API exists to manage a certain resource. 
+For example, items/products. We can create a product, we can delete a product,
+we can update a product, or we can retrieve some information about the product.
+These are the four operations of CRUD 
