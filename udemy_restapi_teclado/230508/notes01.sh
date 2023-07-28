@@ -30,3 +30,5 @@ docker kill rest-api-flask-python
 docker rm rest-api-flask-python
 
 flask run
+
+http://localhost:5000/swagger-ui

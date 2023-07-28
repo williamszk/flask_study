@@ -9,7 +9,8 @@ def main():
     # TODO: [ ] are we testing all endpoints?
 
     print("-- create a store ----------------------------------------------------")
-    res = requests.post(f"{url}:{port}/store", json={"name": "bob marley"})
+    res = requests.post(f"{url}:{port}/store", json={"name": "The Middle Earth Store"})
+    # res = requests.post(f"{url}:{port}/store") // error 422
     print_res(res)
     store_id = res.json()["id"]
 
@@ -30,6 +31,11 @@ def main():
 
     print("-- get all items -----------------------------------------------------")
     res = requests.get(f"{url}:{port}/item")
+    print_res(res)
+    item_id = res.json()[0]["id"]
+
+    print("-- get specific item -------------------------------------------------")
+    res = requests.get(f"{url}:{port}/item/{item_id}")
     print_res(res)
 
 
