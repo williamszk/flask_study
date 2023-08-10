@@ -1,11 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
 
-stores = {}
-
-items = {}
+stores: dict = {}
+items: dict = {}
 
 db = SQLAlchemy()
-
-
-
