@@ -4,7 +4,5 @@
 	},
 	"python.formatting.provider": "none",
 	"python.analysis.typeCheckingMode": "off",
-	"cSpell.words": [
-		"smorest"
-	]
+	"cSpell.words": ["smorest", "sqlalchemy"]
 }

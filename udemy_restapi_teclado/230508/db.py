@@ -1,6 +1,11 @@
+from flask_sqlalchemy import SQLAlchemy
 
-stores = {
-}
 
-items = {
-}
+stores = {}
+
+items = {}
+
+db = SQLAlchemy()
+
+
+

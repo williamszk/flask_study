@@ -1,4 +1,3 @@
-import json
 import requests
 
 
@@ -40,12 +39,6 @@ def main():
 
 
 def print_res(res, headers=False, raw=False):
-    # if res.status_code == 200:
-    #     print(">>> POST request successful")
-    # if res.status_code == 201:
-    #     print(">>> POST request successful, CREATED")
-    # else:
-    #     print(">>> POST request failed. Status code:", res.status_code)
     print(">>>", res.request.method, res.request.url)
     print(res.text)
 
@@ -53,13 +46,6 @@ def print_res(res, headers=False, raw=False):
         print(">>> Response Headers:", res.headers)
     if raw:
         print(">>> Response Raw:", res.raw)
-
-    # if json:
-    #     try:
-    #         response_data = res.json()
-    #         print(">>> Response JSON:", response_data)
-    #     except json.JSONDecodeError as e:
-    #         print(">>> Error decoding JSON response:", str(e))
 
     if res.status_code == 400:
         raise Exception("Sorry, we got a 400")
